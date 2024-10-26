@@ -6,3 +6,11 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
+}
+
+/* For Firefox */
+.hide-scrollbar {
+  scrollbar-width: none; /* Hide scrollbar */
+}

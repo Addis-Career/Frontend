@@ -1,3 +1,4 @@
+"use client";
 import {
   Navbar,
   NavbarBrand,
@@ -9,10 +10,22 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
+  NavbarMenuItem,
+  NavbarMenu,
+  Button,
+  Checkbox,
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
+import { useState } from "react";
 
 const NavBar = () => {
+  const menuItems = ["Home", "Jobs", "About", "Contact"];
+  const [filterVisible, setFilterVisible] = useState(false); // State to toggle filter visibility
+
+  const toggleFilter = () => {
+    setFilterVisible(!filterVisible); // Toggle filter visibility
+  };
+
   return (
     <Navbar
       maxWidth={"full"}
@@ -23,7 +36,7 @@ const NavBar = () => {
         className="p-0 w-full flex items-center justify-between"
       >
         <NavbarBrand className="p-0 m-0">
-          <p className="hidden sm:block font-bold text-inherit">Addis-Career</p>
+          <h1 className="hidden sm:block font-bold text-[2rem]">AddisCareer</h1>
         </NavbarBrand>
 
         <div className="flex items-center gap-4 mr-4">
@@ -70,8 +83,77 @@ const NavBar = () => {
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
+
+          {/* Filter Button */}
+          <Button onClick={toggleFilter} className="text-sm">
+            Filter Jobs
+          </Button>
         </div>
       </NavbarContent>
+
+      {/* Filter Menu */}
+      {filterVisible && (
+        <div className="absolute z-50 bg-white shadow-md p-4 w-1/4 rounded-lg">
+          <h4 className="font-bold text-lg">Filter Job Posts</h4>
+          <div className="flex flex-col space-y-2">
+            <label className="font-semibold">Job Title</label>
+            <Input placeholder="Enter job title" />
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <label className="font-semibold">Location</label>
+            <Input placeholder="Enter location" />
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <label className="font-semibold">Experience Level</label>
+            <div>
+              <Checkbox defaultValue={["Any"]}>
+                <Checkbox value="Any">Any</Checkbox>
+                <Checkbox value="Junior">Junior</Checkbox>
+                <Checkbox value="Mid">Mid</Checkbox>
+                <Checkbox value="Senior">Senior</Checkbox>
+              </Checkbox>
+            </div>
+          </div>
+
+          <div className="flex flex-col space-y-2">
+            <label className="font-semibold">Employment Type</label>
+            <div>
+              <Checkbox defaultValue={["Full-Time"]}>
+                <Checkbox value="Full-Time">Full-Time</Checkbox>
+                <Checkbox value="Part-Time">Part-Time</Checkbox>
+                <Checkbox value="Contract">Contract</Checkbox>
+              </Checkbox>
+            </div>
+          </div>
+
+          <Button className="mt-4" color="primary">
+            Apply Filters
+          </Button>
+        </div>
+      )}
+
+      <NavbarMenu>
+        {menuItems.map((item, index) => (
+          <NavbarMenuItem key={`${item}-${index}`}>
+            <Link
+              color={
+                index === 2
+                  ? "primary"
+                  : index === menuItems.length - 1
+                  ? "danger"
+                  : "foreground"
+              }
+              className="w-full"
+              href="#"
+              size="lg"
+            >
+              {item}
+            </Link>
+          </NavbarMenuItem>
+        ))}
+      </NavbarMenu>
     </Navbar>
   );
 };

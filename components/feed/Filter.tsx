@@ -1,52 +1,112 @@
+"use client";
+
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { motion } from "framer-motion";
 import {
   Card,
   CardHeader,
   CardBody,
-  Checkbox,
   Button,
-  Input,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
+import { fetchJobs } from "../../lib/features/jobSlice"; // Adjust the import path as needed
 
-const Filter = () => {
+const Filter: React.FC = () => {
+  const dispatch = useDispatch();
+  const [workArrangement, setWorkArrangement] = useState<string>("");
+  const [jobType, setJobType] = useState<string>("");
+
+  const handleApplyFilters = () => {
+    dispatch(
+      fetchJobs({
+        nextUrl: "",
+        job_title: "",
+        work_arrangement: workArrangement,
+        job_type: jobType,
+      }) as any
+    );
+  };
+
+  const workArrangementOptions = ["--", "Remote", "Hybrid", "Onsite"];
+  const jobTypeOptions = ["--", "Full-time", "Part-time", "Contract", "Intern"];
+
   return (
-    <div className="h-[100%] w-[30%] p-5 pt-10">
-      <Card className="py-4 sticky ">
-        <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-          <h4 className="font-bold text-large">Filter Job Posts</h4>
+    <div className="w-full md:w-[30%] p-2 md:p-6 md:py-10 h-[100%]">
+      <Card className="py-5 sticky top-20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-xl h-[100%]">
+        <CardHeader className="pb-0 pt-2 px-4">
+          <h4 className="font-bold text-lg text-primary">Filter Jobs</h4>
         </CardHeader>
-        <CardBody className="py-4 space-y-4">
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Job Title</label>
-            <Input placeholder="Enter job title" />
-          </div>
+        <CardBody className="py-2 space-y-4 h-[100%]">
+          <motion.div
+            className="space-y-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <label
+              htmlFor="work-arrangement"
+              className="font-semibold text-sm block mb-1"
+            >
+              Work Arrangement
+            </label>
+            <Select
+              id="work-arrangement"
+              size="sm"
+              value={workArrangement}
+              onChange={(e) => setWorkArrangement(e.target.value)}
+              className="max-w-full"
+            >
+              {workArrangementOptions.map((option) => (
+                <SelectItem key={option} value={option === "--" ? "" : option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </Select>
+          </motion.div>
 
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Location</label>
-            <Input placeholder="Enter location" />
-          </div>
+          <motion.div
+            className="space-y-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <label
+              htmlFor="job-type"
+              className="font-semibold text-sm block mb-1"
+            >
+              Job Type
+            </label>
+            <Select
+              id="job-type"
+              size="sm"
+              value={jobType}
+              onChange={(e) => setJobType(e.target.value)}
+              className="max-w-full"
+            >
+              {jobTypeOptions.map((option) => (
+                <SelectItem key={option} value={option === "--" ? "" : option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </Select>
+          </motion.div>
 
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Experience Level</label>
-            <Checkbox defaultValue={["Any"]}>
-              <Checkbox value="Any">Any</Checkbox>
-              <Checkbox value="Junior">Junior</Checkbox>
-              <Checkbox value="Mid">Mid</Checkbox>
-              <Checkbox value="Senior">Senior</Checkbox>
-            </Checkbox>
-          </div>
-
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Employment Type</label>
-            <Checkbox defaultValue={["Full-Time"]}>
-              <Checkbox value="Full-Time">Full-Time</Checkbox>
-              <Checkbox value="Part-Time">Part-Time</Checkbox>
-              <Checkbox value="Contract">Contract</Checkbox>
-            </Checkbox>
-          </div>
-
-          <Button className="mt-4" color="primary">
-            Apply Filters
-          </Button>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Button
+              className="w-full mt-2"
+              color="primary"
+              size="sm"
+              onClick={handleApplyFilters}
+            >
+              Apply Filters
+            </Button>
+          </motion.div>
         </CardBody>
       </Card>
     </div>

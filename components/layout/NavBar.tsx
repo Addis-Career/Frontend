@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Navbar,
   NavbarBrand,
@@ -10,26 +11,63 @@ import {
   Dropdown,
   DropdownMenu,
   Avatar,
-  NavbarMenuItem,
-  NavbarMenu,
   Button,
-  Checkbox,
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/lib/store";
+import { fetchJobs } from "@/lib/features/jobSlice";
+
+const debounce = (func: Function, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+  return (...args: any[]) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
 
 const NavBar = () => {
-  const menuItems = ["Home", "Jobs", "About", "Contact"];
-  const [filterVisible, setFilterVisible] = useState(false); // State to toggle filter visibility
+  const [searchTerm, setSearchTerm] = useState(""); // State for search input
+  const dispatch = useDispatch<AppDispatch>();
 
-  const toggleFilter = () => {
-    setFilterVisible(!filterVisible); // Toggle filter visibility
+  const handleSearch = (term: string) => {
+    dispatch(
+      fetchJobs({
+        nextUrl: "",
+        job_title: term,
+        work_arrangement: "",
+        job_type: "",
+      })
+    );
+  };
+
+  const debouncedSearch = debounce(handleSearch, 1000); // Debounce with a 300ms delay
+
+  useEffect(() => {
+    // Initial job fetch
+    dispatch(
+      fetchJobs({
+        nextUrl: "",
+        job_title: "",
+        work_arrangement: "",
+        job_type: "",
+      })
+    );
+  }, [dispatch]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    debouncedSearch(term); // Call the debounced search function
   };
 
   return (
     <Navbar
       maxWidth={"full"}
-      className="fixed bg-white p-[0.4rem] md:pl-[5rem] md:pr-[5rem] z-[9999] shadow-md"
+      className="fixed bg-white p-[0.4rem] md:pl-[5rem] md:pr-[5rem] z-20 shadow-md"
     >
       <NavbarContent
         justify="start"
@@ -41,6 +79,8 @@ const NavBar = () => {
 
         <div className="flex items-center gap-4 mr-4">
           <Input
+            value={searchTerm} // Controlled input
+            onChange={handleChange} // Handle input change
             classNames={{
               base: "max-w-full sm:max-w-[20rem] h-10",
               mainWrapper: "h-full",
@@ -83,77 +123,8 @@ const NavBar = () => {
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
-
-          {/* Filter Button */}
-          <Button onClick={toggleFilter} className="text-sm">
-            Filter Jobs
-          </Button>
         </div>
       </NavbarContent>
-
-      {/* Filter Menu */}
-      {filterVisible && (
-        <div className="absolute z-50 bg-white shadow-md p-4 w-1/4 rounded-lg">
-          <h4 className="font-bold text-lg">Filter Job Posts</h4>
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Job Title</label>
-            <Input placeholder="Enter job title" />
-          </div>
-
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Location</label>
-            <Input placeholder="Enter location" />
-          </div>
-
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Experience Level</label>
-            <div>
-              <Checkbox defaultValue={["Any"]}>
-                <Checkbox value="Any">Any</Checkbox>
-                <Checkbox value="Junior">Junior</Checkbox>
-                <Checkbox value="Mid">Mid</Checkbox>
-                <Checkbox value="Senior">Senior</Checkbox>
-              </Checkbox>
-            </div>
-          </div>
-
-          <div className="flex flex-col space-y-2">
-            <label className="font-semibold">Employment Type</label>
-            <div>
-              <Checkbox defaultValue={["Full-Time"]}>
-                <Checkbox value="Full-Time">Full-Time</Checkbox>
-                <Checkbox value="Part-Time">Part-Time</Checkbox>
-                <Checkbox value="Contract">Contract</Checkbox>
-              </Checkbox>
-            </div>
-          </div>
-
-          <Button className="mt-4" color="primary">
-            Apply Filters
-          </Button>
-        </div>
-      )}
-
-      <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
-              }
-              className="w-full"
-              href="#"
-              size="lg"
-            >
-              {item}
-            </Link>
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
     </Navbar>
   );
 };

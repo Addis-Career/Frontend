@@ -5,7 +5,7 @@ import Feed from "@/components/feed/Feed";
 
 const page = () => {
   return (
-    <div className="flex items-center justify-center h-[100lvh] pt-[4.8rem] overflow-clip">
+    <div className="flex items-center justify-center h-[100lvh] pt-[4.8rem] overflow-clip bg-gradient-to-br from-purple-100 to-blue-100 dark:from-gray-900 dark:to-gray-800">
       <Filter />
       <Feed />
       <Ads />

@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
+import { MantineProvider } from "@mantine/core";
 import NavBar from "../components/layout/NavBar";
 import { Provider } from "react-redux";
 import store from "@/lib/store";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,14 +28,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div>
+        <SessionProvider>
           <NextUIProvider>
-            <Provider store={store}>
-              <NavBar />
-              {children}
-            </Provider>
+            <MantineProvider>
+              <Provider store={store}>{children}</Provider>
+            </MantineProvider>
           </NextUIProvider>
-        </div>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -33,7 +33,7 @@ const Filter: React.FC = () => {
   const jobTypeOptions = ["--", "Full-time", "Part-time", "Contract", "Intern"];
 
   return (
-    <div className="w-full md:w-[30%] p-2 md:p-6 md:py-10 h-[100%]">
+    <div className="">
       <Card className="py-5 sticky top-20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-xl h-[100%]">
         <CardHeader className="pb-0 pt-2 px-4">
           <h4 className="font-bold text-lg text-primary">Filter Jobs</h4>

@@ -13,11 +13,16 @@ import {
   Avatar,
   Button,
 } from "@nextui-org/react";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaStackOverflow } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/lib/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
 import { fetchJobs } from "@/lib/features/jobSlice";
+import { signOut, useSession } from "next-auth/react";
+import Filter from "../feed/Filter";
+import { CiFilter } from "react-icons/ci";
+import { getProfileAsync } from "@/lib/features/createProfile";
+import { Root } from "postcss";
 
 const debounce = (func: Function, delay: number) => {
   let timeoutId: NodeJS.Timeout;
@@ -31,7 +36,11 @@ const debounce = (func: Function, delay: number) => {
 
 const NavBar = () => {
   const [searchTerm, setSearchTerm] = useState(""); // State for search input
+  const [showFilter, setShowFilter] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const userProfile = useSelector(
+    (state: RootState) => state.profile.userProfile
+  );
 
   const handleSearch = (term: string) => {
     dispatch(
@@ -43,6 +52,7 @@ const NavBar = () => {
       })
     );
   };
+  const { data: session } = useSession();
 
   const debouncedSearch = debounce(handleSearch, 1000); // Debounce with a 300ms delay
 
@@ -63,6 +73,12 @@ const NavBar = () => {
     setSearchTerm(term);
     debouncedSearch(term); // Call the debounced search function
   };
+  useEffect(() => {
+    const token = session?.user?.accessToken || "";
+    if (token) {
+      dispatch(getProfileAsync(token));
+    }
+  }, [session]);
 
   return (
     <Navbar
@@ -75,12 +91,18 @@ const NavBar = () => {
       >
         <NavbarBrand className="p-0 m-0">
           <h1 className="hidden sm:block font-bold text-[2rem]">AddisCareer</h1>
+          <div className="block sm:hidden">
+            <Button
+              startContent={<CiFilter size={24} />}
+              onClick={() => setShowFilter(!showFilter)}
+            />
+          </div>
         </NavbarBrand>
 
         <div className="flex items-center gap-4 mr-4">
           <Input
             value={searchTerm} // Controlled input
-            onChange={handleChange} // Handle input change
+            onChange={handleChange}
             classNames={{
               base: "max-w-full sm:max-w-[20rem] h-10",
               mainWrapper: "h-full",
@@ -100,31 +122,36 @@ const NavBar = () => {
                 as="button"
                 className="transition-transform"
                 color="secondary"
-                name="Jason Hughes"
+                name={`${userProfile.user?.first_name} ${userProfile.user?.last_name}`}
                 size="md"
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                src={
+                  session?.user?.profile &&
+                  "profile_image_uri" in session.user.profile
+                    ? session.user.profile.profile_image_uri
+                    : ""
+                }
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">zoey@example.com</p>
+              <DropdownItem href="/careers/profile" key="configurations">
+                Profile
               </DropdownItem>
-              <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="team_settings">Team Settings</DropdownItem>
-              <DropdownItem key="analytics">Analytics</DropdownItem>
-              <DropdownItem key="system">System</DropdownItem>
-              <DropdownItem key="configurations">Configurations</DropdownItem>
-              <DropdownItem key="help_and_feedback">
-                Help & Feedback
-              </DropdownItem>
-              <DropdownItem key="logout" color="danger">
+              <DropdownItem
+                key="logout"
+                color="danger"
+                onClick={() => signOut()}
+              >
                 Log Out
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
       </NavbarContent>
+      {showFilter && (
+        <div className="absolute top-full left-0 w-full bg-white shadow-md z-10">
+          <Filter />
+        </div>
+      )}
     </Navbar>
   );
 };

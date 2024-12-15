@@ -1,6 +1,6 @@
 // features/jobs/jobsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import fetch from "../api/api";
+import fetch from "../api/jobApi";
 import { ResponseJob, JobsState } from "../../types/types";
 
 export const fetchJobs = createAsyncThunk<
@@ -25,10 +25,8 @@ export const fetchJobs = createAsyncThunk<
         work_arrangement,
         job_type,
       });
-      console.log("Fetched data:", response);
       return response;
     } catch (error: any) {
-      console.log("Error fetching data");
       return rejectWithValue(error.response?.data || "Failed to fetch jobs");
     }
   }
@@ -59,7 +57,6 @@ const jobsSlice = createSlice({
       .addCase(fetchJobs.pending, (state) => {
         state.loading = true;
         state.error = null;
-        console.log("Loading set to true for pagination");
       })
       .addCase(
         fetchJobs.fulfilled,

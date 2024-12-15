@@ -9,6 +9,8 @@ import { RootState, AppDispatch } from "../../lib/store";
 import { fetchJobs } from "../../lib/features/jobSlice";
 import Sidebar from "../layout/Sidebar";
 import { Card, CardBody, Chip, Button, Skeleton } from "@nextui-org/react";
+import { getProfileAsync } from "@/lib/features/createProfile";
+import { useSession } from "next-auth/react";
 
 const Feed = () => {
   const [likedJobs, setLikedJobs] = useState(new Set<number>());
@@ -23,16 +25,17 @@ const Feed = () => {
   );
 
   useEffect(() => {
-    // Fetch initial jobs on component mount
-    dispatch(
-      fetchJobs({
-        nextUrl: "",
-        job_title: "",
-        work_arrangement: "",
-        job_type: "",
-      })
-    ).finally(() => setIsFetching(false));
-  }, [dispatch]);
+    if (jobs.results.length <= 0) {
+      dispatch(
+        fetchJobs({
+          nextUrl: "",
+          job_title: "",
+          work_arrangement: "",
+          job_type: "",
+        })
+      ).finally(() => setIsFetching(false));
+    }
+  }, []);
 
   const handleLike = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
@@ -97,6 +100,7 @@ const Feed = () => {
     }
     setIsFetching(false); // Reset fetching state
   };
+  const { data: session } = useSession();
 
   return (
     <div className="w-full p-5 pt-10 h-full flex flex-col gap-3">

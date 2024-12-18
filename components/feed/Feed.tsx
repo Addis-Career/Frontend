@@ -18,24 +18,12 @@ const Feed = () => {
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false); // Local fetching state
+  const { data: session } = useSession();
 
   const dispatch = useDispatch<AppDispatch>();
   const { jobs, loading, error } = useSelector(
     (state: RootState) => state.jobs
   );
-
-  useEffect(() => {
-    if (jobs.results.length <= 0) {
-      dispatch(
-        fetchJobs({
-          nextUrl: "",
-          job_title: "",
-          work_arrangement: "",
-          job_type: "",
-        })
-      ).finally(() => setIsFetching(false));
-    }
-  }, []);
 
   const handleLike = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
@@ -100,7 +88,6 @@ const Feed = () => {
     }
     setIsFetching(false); // Reset fetching state
   };
-  const { data: session } = useSession();
 
   return (
     <div className="w-full p-5 pt-10 h-full flex flex-col gap-3">

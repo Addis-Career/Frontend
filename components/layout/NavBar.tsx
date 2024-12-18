@@ -41,7 +41,16 @@ const NavBar = () => {
   const userProfile = useSelector(
     (state: RootState) => state.profile.userProfile
   );
-
+  useEffect(() => {
+    dispatch(
+      fetchJobs({
+        nextUrl: "",
+        job_title: "",
+        work_arrangement: "",
+        job_type: "",
+      })
+    );
+  }, []);
   const handleSearch = (term: string) => {
     dispatch(
       fetchJobs({
@@ -90,7 +99,12 @@ const NavBar = () => {
         className="p-0 w-full flex items-center justify-between"
       >
         <NavbarBrand className="p-0 m-0">
-          <h1 className="hidden sm:block font-bold text-[2rem]">AddisCareer</h1>
+          <h1
+            className="hidden sm:block font-bold text-[2rem] cursor-pointer"
+            onClick={() => (window.location.href = "/careers")}
+          >
+            AddisCareer
+          </h1>
           <div className="block sm:hidden">
             <Button
               startContent={<CiFilter size={24} />}

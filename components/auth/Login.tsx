@@ -13,7 +13,7 @@ import {
 import { Eye, EyeOff, Sun, Moon, Linkedin, Mail, Cpu } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 
@@ -35,7 +35,7 @@ export default function Login() {
   const [strength, setStrength] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({ email: "", password: "" }); // State for errors
+  const [errors, setErrors] = useState({ email: "", password: "" }); // State for errors\
   const router = useRouter();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -60,7 +60,6 @@ export default function Login() {
         email,
         password,
       });
-
       setIsLoading(false);
 
       if (result?.error) {
@@ -96,6 +95,8 @@ export default function Login() {
         isDarkMode ? "dark" : ""
       }`}
     >
+      <ToastContainer />
+
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

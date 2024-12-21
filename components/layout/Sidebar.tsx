@@ -200,14 +200,16 @@ export default function Sidebar({ isOpen, job, onClose }: SidebarProps) {
               </a>
             </div>
           </section>
-          <Button
-            color="primary"
-            className="w-full mt-6"
-            size="lg"
+          <a
             href={`${job?.application_link}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full mt-6"
           >
-            Apply Now
-          </Button>
+            <Button color="primary" className="w-full" size="lg">
+              Apply Now
+            </Button>
+          </a>
         </div>
       </ScrollShadow>
     </div>

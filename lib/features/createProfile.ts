@@ -67,9 +67,11 @@ const profileSlice = createSlice({
         state.error = false;
         state.success = false;
       })
-      .addCase(createProfileAsync.fulfilled, (state) => {
+      .addCase(createProfileAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
+        state.error = false;
+        state.userProfile = action.payload;
       })
       .addCase(createProfileAsync.rejected, (state, action) => {
         state.loading = false;

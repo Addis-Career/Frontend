@@ -55,20 +55,47 @@ export default function Login() {
       );
 
       setIsLoading(true);
-      const result = await signIn("credentials", {
+      
+      // Add timeout to prevent infinite loading
+      const loginPromise = signIn("credentials", {
         redirect: false,
         email,
         password,
       });
-      setIsLoading(false);
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Login request timed out")), 10000);
+      });
+
+      type SignInResponse = {
+        error?: string;
+        ok?: boolean;
+        status?: number;
+      };
+
+      const result = await Promise.race([loginPromise, timeoutPromise])
+        .catch(error => {
+          console.error("Login error:", error);
+          return { error: error.message || "An unexpected error occurred" };
+        })
+        .finally(() => {
+          setIsLoading(false);
+        }) as SignInResponse;
 
       if (result?.error) {
-        toast.error("Login failed: " + result.error);
+        toast.error("Login failed: " + (result.error === "Login request timed out" 
+          ? "Cannot connect to the server. Please check your connection and try again." 
+          : result.error));
       } else {
         toast.success("Login successful");
-        router.push("/careers");
+        // Add a small delay to ensure the session is set before redirecting
+        setTimeout(() => {
+          router.push("/careers");
+          router.refresh(); // Force a refresh to ensure the new session is picked up
+        }, 1000);
       }
     } catch (err: any) {
+      setIsLoading(false);
       if (err.inner) {
         const newErrors: Record<string, string> = {};
         err.inner.forEach((validationError: yup.ValidationError) => {
@@ -137,12 +164,14 @@ export default function Login() {
               </AnimatePresence>
             </Button>
           </CardHeader>
-          <CardBody>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <CardBody className="px-6 py-4">
+            <h2 className="text-center text-xl font-semibold mb-6 text-gray-800 dark:text-white">Welcome Back!</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
               <motion.div
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
+                className="space-y-2"
               >
                 <Input
                   type="email"
@@ -150,7 +179,13 @@ export default function Login() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/50 dark:bg-gray-700/50"
+                  classNames={{
+                    base: "w-full",
+                    mainWrapper: "h-full",
+                    input: "text-small pt-4",
+                    inputWrapper: "h-12 font-normal bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg hover:bg-white/90 dark:hover:bg-gray-800/90 ring-1 ring-gray-200 dark:ring-gray-800",
+                    label: "text-black/50 dark:text-white/90 font-medium text-small after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-blue-500 after:to-purple-500 after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:duration-300",
+                  }}
                 />
                 {errors.email && (
                   <p className="text-sm text-red-500 mt-1">{errors.email}</p>
@@ -160,6 +195,7 @@ export default function Login() {
                 initial={{ x: 50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
+                className="space-y-2"
               >
                 <Input
                   label="Password"
@@ -180,7 +216,13 @@ export default function Login() {
                     </button>
                   }
                   type={isVisible ? "text" : "password"}
-                  className="bg-white/50 dark:bg-gray-700/50"
+                  classNames={{
+                    base: "w-full",
+                    mainWrapper: "h-full",
+                    input: "text-small pt-4",
+                    inputWrapper: "h-12 font-normal bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg hover:bg-white/90 dark:hover:bg-gray-800/90 ring-1 ring-gray-200 dark:ring-gray-800",
+                    label: "text-black/50 dark:text-white/90 font-medium text-small after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-blue-500 after:to-purple-500 after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:duration-300",
+                  }}
                 />
                 {errors.password && (
                   <p className="text-sm text-red-500 mt-1">{errors.password}</p>
@@ -190,8 +232,9 @@ export default function Login() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
+                className="space-y-2"
               >
-                <p className="text-sm mb-1 text-gray-700 dark:text-gray-300">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   Password strength
                 </p>
                 <Progress
@@ -210,21 +253,23 @@ export default function Login() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
+                className="space-y-4"
               >
                 <Button
                   color="primary"
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl"
                   startContent={<Cpu className="h-5 w-5" />}
                   isDisabled={isLoading}
+                  size="lg"
                 >
                   {isLoading ? "Logging in..." : "Sign In"}
                 </Button>
-                <p className="text-center text-gray-700 dark:text-gray-300">
+                <p className="text-center text-gray-700 dark:text-gray-300 pt-2">
                   Don&apos;t have an account?{" "}
                   <a
                     href="/signup"
-                    className="text-blue-500 dark:text-blue-400"
+                    className="text-blue-500 dark:text-blue-400 hover:underline font-medium"
                   >
                     Sign up
                   </a>

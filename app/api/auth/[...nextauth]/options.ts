@@ -12,6 +12,14 @@ declare module "next-auth" {
       profile: Profile | {};
     };
   }
+  
+  interface User {
+    id: string;
+    email: string;
+    accessToken: string;
+    refreshToken: string;
+    profile: Profile | {};
+  }
 }
 
 export const options: NextAuthOptions = {
@@ -49,12 +57,17 @@ export const options: NextAuthOptions = {
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = (user as any).accessToken;
-        token.refreshToken = (user as any).refreshToken;
-        token.profile = (user as any).profile;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+        token.profile = user.profile;
+        token.email = user.email;
       }
       return token;
     },
@@ -67,5 +80,8 @@ export const options: NextAuthOptions = {
       };
       return session;
     },
+  },
+  pages: {
+    signIn: '/login',
   },
 };

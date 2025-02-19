@@ -35,7 +35,7 @@ export interface RegistrationData {
   last_name: string;
   email: string;
   password: string;
-  confirmPassword?: string;
+  confirmPassword: string;
 }
 
 export interface User {
@@ -67,22 +67,41 @@ export interface ProfileState {
   profile: Profile;
 }
 export interface UserProfile {
-  id?: number;
+  id?: string;
   user?: {
-    id?: number;
-    email?: string;
-    first_name?: string;
-    last_name?: string;
+    first_name: string;
+    last_name: string;
+    email: string;
   };
-  country?: string | null;
-  city?: string | null;
-  phone_number?: string | null;
-  profile_image_uri?: string | null;
-  bio?: string | null;
-  prefered_tech_stacks?: string[] | null;
-  resume_uri?: string | null;
-  preferred_job_types?: string | null;
-  prefered_work_arrangement?: string | null;
-  summary_from_resume?: string | null;
+  phone_number?: string;
+  title?: string;
+  bio?: string;
+  location?: string;
+  country?: string;
+  city?: string;
+  profile_image_uri?: string;
+  resume_uri?: string;
+  github_url?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  prefered_tech_stacks?: string[];
+  prefered_work_arrangement?: string;
+  preferred_job_types?: string[];
   profile_does_not_exist?: boolean;
+  summary_from_resume?: string;
+  experiences?: {
+    company: string;
+    position: string;
+    startDate: string;
+    endDate: string;
+    description: string;
+  }[];
+  education?: {
+    school: string;
+    degree: string;
+    field: string;
+    startDate: string;
+    endDate: string;
+  }[];
+  skills?: string[];
 }

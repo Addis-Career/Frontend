@@ -21,7 +21,9 @@ export const registerUserThunk = createAsyncThunk(
       const response = await registerUser(data);
       return response;
     } catch (error: any) {
-      return rejectWithValue(error.response.data.email[0]);
+      // Handle error message from the API or use error message from Error object
+      const errorMessage = error.message || "Registration failed. Please try again.";
+      return rejectWithValue(errorMessage);
     }
   }
 );

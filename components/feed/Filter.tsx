@@ -29,16 +29,18 @@ const Filter: React.FC = () => {
     );
   };
 
-  const workArrangementOptions = ["--", "Remote", "Hybrid", "Onsite"];
-  const jobTypeOptions = ["--", "Full-time", "Part-time", "Contract", "Intern"];
+  const workArrangementOptions = ["Remote", "Hybrid", "Onsite"];
+  const jobTypeOptions = ["Full-time", "Part-time", "Contract", "Intern"];
 
   return (
-    <div className="">
-      <Card className="py-5 sticky top-20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-xl h-[100%]">
-        <CardHeader className="pb-0 pt-2 px-4">
-          <h4 className="font-bold text-lg text-primary">Filter Jobs</h4>
+    <div className="w-full max-w-xs">
+      <Card className="sticky top-20 bg-white dark:bg-gray-900 shadow-xl rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+        <CardHeader className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h4 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Filter Jobs
+          </h4>
         </CardHeader>
-        <CardBody className="py-2 space-y-4 h-[100%]">
+        <CardBody className="px-6 py-4 space-y-6">
           <motion.div
             className="space-y-2"
             initial={{ opacity: 0, y: 20 }}
@@ -47,19 +49,49 @@ const Filter: React.FC = () => {
           >
             <label
               htmlFor="work-arrangement"
-              className="font-semibold text-sm block mb-1"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Work Arrangement
             </label>
             <Select
               id="work-arrangement"
-              size="sm"
-              value={workArrangement}
+              selectedKeys={workArrangement ? [workArrangement] : []}
+              placeholder="Select work arrangement"
               onChange={(e) => setWorkArrangement(e.target.value)}
-              className="max-w-full"
+              classNames={{
+                base: "max-w-full",
+                trigger: "h-11 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors",
+                value: "text-base text-gray-900 dark:text-gray-100 font-medium",
+                listbox: "bg-white dark:bg-gray-800",
+                popoverContent: "bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-xl",
+              }}
+              listboxProps={{
+                itemClasses: {
+                  base: [
+                    "rounded-md",
+                    "text-base",
+                    "text-gray-900",
+                    "dark:text-gray-100",
+                    "transition-colors",
+                    "data-[hover=true]:text-blue-600",
+                    "data-[hover=true]:bg-blue-50",
+                    "dark:data-[hover=true]:bg-blue-900/20",
+                    "data-[selected=true]:text-blue-600",
+                    "data-[selected=true]:bg-blue-50",
+                    "dark:data-[selected=true]:bg-blue-900/20",
+                    "data-[selected=true]:font-medium",
+                    "py-3",
+                    "px-4",
+                  ],
+                },
+              }}
             >
               {workArrangementOptions.map((option) => (
-                <SelectItem key={option} value={option === "--" ? "" : option}>
+                <SelectItem 
+                  key={option} 
+                  value={option}
+                  className="data-[selected=true]:bg-blue-50 dark:data-[selected=true]:bg-blue-900/20"
+                >
                   {option}
                 </SelectItem>
               ))}
@@ -70,23 +102,53 @@ const Filter: React.FC = () => {
             className="space-y-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.6 }}
           >
             <label
               htmlFor="job-type"
-              className="font-semibold text-sm block mb-1"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
             >
               Job Type
             </label>
             <Select
               id="job-type"
-              size="sm"
-              value={jobType}
+              selectedKeys={jobType ? [jobType] : []}
+              placeholder="Select job type"
               onChange={(e) => setJobType(e.target.value)}
-              className="max-w-full"
+              classNames={{
+                base: "max-w-full",
+                trigger: "h-11 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-colors",
+                value: "text-base text-gray-900 dark:text-gray-100 font-medium",
+                listbox: "bg-white dark:bg-gray-800",
+                popoverContent: "bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-xl",
+              }}
+              listboxProps={{
+                itemClasses: {
+                  base: [
+                    "rounded-md",
+                    "text-base",
+                    "text-gray-900",
+                    "dark:text-gray-100",
+                    "transition-colors",
+                    "data-[hover=true]:text-blue-600",
+                    "data-[hover=true]:bg-blue-50",
+                    "dark:data-[hover=true]:bg-blue-900/20",
+                    "data-[selected=true]:text-blue-600",
+                    "data-[selected=true]:bg-blue-50",
+                    "dark:data-[selected=true]:bg-blue-900/20",
+                    "data-[selected=true]:font-medium",
+                    "py-3",
+                    "px-4",
+                  ],
+                },
+              }}
             >
               {jobTypeOptions.map((option) => (
-                <SelectItem key={option} value={option === "--" ? "" : option}>
+                <SelectItem 
+                  key={option} 
+                  value={option}
+                  className="data-[selected=true]:bg-blue-50 dark:data-[selected=true]:bg-blue-900/20"
+                >
                   {option}
                 </SelectItem>
               ))}
@@ -96,13 +158,13 @@ const Filter: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.7 }}
           >
             <Button
-              className="w-full mt-2"
-              color="primary"
-              size="sm"
               onClick={handleApplyFilters}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-2.5 rounded-lg
+                        hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02] transition-all
+                        focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
             >
               Apply Filters
             </Button>

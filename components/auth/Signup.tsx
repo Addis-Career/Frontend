@@ -135,19 +135,27 @@ export default function Signup() {
               </AnimatePresence>
             </Button>
           </CardHeader>
-          <CardBody>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <CardBody className="px-6 py-4">
+            <h2 className="text-center text-xl font-semibold mb-6 text-gray-800 dark:text-white">Create Account</h2>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <motion.div
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
+                className="space-y-2"
               >
                 <Input
                   type="text"
                   label="First Name"
                   placeholder="Enter your first name"
                   {...register("first_name")}
-                  className=" dark:bg-gray-700/50"
+                  classNames={{
+                    base: "w-full",
+                    mainWrapper: "h-full",
+                    input: "text-small pt-4",
+                    inputWrapper: "h-12 font-normal bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg hover:bg-white/90 dark:hover:bg-gray-800/90 ring-1 ring-gray-200 dark:ring-gray-800",
+                    label: "text-black/50 dark:text-white/90 font-medium text-small after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-blue-500 after:to-purple-500 after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:duration-300",
+                  }}
                 />
                 {errors.first_name?.message && (
                   <p className="text-red-500 text-[12px]">
@@ -159,16 +167,23 @@ export default function Signup() {
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
+                className="space-y-2"
               >
                 <Input
                   type="text"
                   label="Last Name"
                   placeholder="Enter your last name"
                   {...register("last_name")}
-                  className=" dark:bg-gray-700/50"
+                  classNames={{
+                    base: "w-full",
+                    mainWrapper: "h-full",
+                    input: "text-small pt-4",
+                    inputWrapper: "h-12 font-normal bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg hover:bg-white/90 dark:hover:bg-gray-800/90 ring-1 ring-gray-200 dark:ring-gray-800",
+                    label: "text-black/50 dark:text-white/90 font-medium text-small after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-blue-500 after:to-purple-500 after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:duration-300",
+                  }}
                 />
                 {errors.last_name && (
-                  <p className="text-red-500 text-[12px] ">
+                  <p className="text-red-500 text-[12px]">
                     {String(errors.last_name.message)}
                   </p>
                 )}
@@ -177,13 +192,20 @@ export default function Signup() {
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
+                className="space-y-2"
               >
                 <Input
                   type="email"
                   label="Email"
                   placeholder="Enter your email"
                   {...register("email")}
-                  className=" dark:bg-gray-700/50"
+                  classNames={{
+                    base: "w-full",
+                    mainWrapper: "h-full",
+                    input: "text-small pt-4",
+                    inputWrapper: "h-12 font-normal bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg hover:bg-white/90 dark:hover:bg-gray-800/90 ring-1 ring-gray-200 dark:ring-gray-800",
+                    label: "text-black/50 dark:text-white/90 font-medium text-small after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-blue-500 after:to-purple-500 after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:duration-300",
+                  }}
                 />
                 {errors.email && (
                   <p className="text-red-500 text-[12px]">
@@ -195,6 +217,7 @@ export default function Signup() {
                 initial={{ x: 50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
+                className="space-y-2"
               >
                 <Input
                   label="Password"
@@ -214,7 +237,13 @@ export default function Signup() {
                     </button>
                   }
                   type={isVisible ? "text" : "password"}
-                  className=" dark:bg-gray-700/50"
+                  classNames={{
+                    base: "w-full",
+                    mainWrapper: "h-full",
+                    input: "text-small pt-4",
+                    inputWrapper: "h-12 font-normal bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg hover:bg-white/90 dark:hover:bg-gray-800/90 ring-1 ring-gray-200 dark:ring-gray-800",
+                    label: "text-black/50 dark:text-white/90 font-medium text-small after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-blue-500 after:to-purple-500 after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:duration-300",
+                  }}
                 />
                 {errors.password && (
                   <p className="text-red-500 text-[12px]">
@@ -226,6 +255,7 @@ export default function Signup() {
                 initial={{ x: 50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
+                className="space-y-2"
               >
                 <Input
                   label="Confirm Password"
@@ -245,7 +275,13 @@ export default function Signup() {
                     </button>
                   }
                   type={isVisible ? "text" : "password"}
-                  className=" dark:bg-gray-700/50"
+                  classNames={{
+                    base: "w-full",
+                    mainWrapper: "h-full",
+                    input: "text-small pt-4",
+                    inputWrapper: "h-12 font-normal bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg hover:bg-white/90 dark:hover:bg-gray-800/90 ring-1 ring-gray-200 dark:ring-gray-800",
+                    label: "text-black/50 dark:text-white/90 font-medium text-small after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-gradient-to-r after:from-blue-500 after:to-purple-500 after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:duration-300",
+                  }}
                 />
                 {errors.confirmPassword && (
                   <p className="text-red-500 text-[12px]">
@@ -257,8 +293,9 @@ export default function Signup() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.7 }}
+                className="space-y-2"
               >
-                <p className="text-sm mb-1 text-gray-700 dark:text-gray-300">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   Password strength
                 </p>
                 <Progress
@@ -277,57 +314,29 @@ export default function Signup() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.8 }}
+                className="space-y-4"
               >
                 <Button
                   color="primary"
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl"
                   startContent={<Cpu className="h-5 w-5" />}
                   isDisabled={loading}
+                  size="lg"
                 >
-                  {loading ? "Signing Up..." : "Sign Up"}
+                  {loading ? "Creating Account..." : "Sign Up"}
                 </Button>
+                <p className="text-center text-gray-700 dark:text-gray-300 pt-2">
+                  Already have an account?{" "}
+                  <Link
+                    href="/login"
+                    className="text-blue-500 dark:text-blue-400 hover:underline font-medium"
+                  >
+                    Sign in
+                  </Link>
+                </p>
               </motion.div>
             </form>
-            {/* <div className="mt-4 space-y-2">
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.9 }}
-              >
-                <Button
-                  startContent={<Mail className="h-5 w-5" />}
-                  className="w-full  dark:bg-gray-700/50 text-gray-800 dark:text-white"
-                  variant="flat"
-                >
-                  Continue with Google
-                </Button>
-              </motion.div>
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 1.0 }}
-              >
-                <Button
-                  startContent={<Linkedin className="h-5 w-5" />}
-                  className="w-full bg-blue-600 text-white"
-                  variant="flat"
-                >
-                  Continue with LinkedIn
-                </Button>
-              </motion.div>
-            </div> */}
-            <div className="mt-4 text-center">
-              <p className="text-gray-700 dark:text-gray-300">
-                Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="text-blue-500 dark:text-blue-300"
-                >
-                  Login
-                </Link>
-              </p>
-            </div>
           </CardBody>
         </Card>
       </motion.div>

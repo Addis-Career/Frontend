@@ -1,6 +1,7 @@
 name: Install Dependencies
 
-on: [workflow_dispatch]  # Allows manual triggering
+on:
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   install:
@@ -9,6 +10,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: abdu-exprimental
 
       - name: Install dependencies
         run: npm install

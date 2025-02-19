@@ -1,0 +1,23 @@
+name: Install Dependencies
+
+on: [workflow_dispatch]  # Allows manual triggering
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Compress node_modules
+        run: tar -czf node_modules.tar.gz node_modules
+
+      - name: Upload node_modules as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: node_modules
+          path: node_modules.tar.gz

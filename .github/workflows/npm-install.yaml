@@ -1,11 +1,14 @@
 name: Install Dependencies
 
-on: [workflow_dispatch]  # Allows manual triggering
+on:
+  push:
+    branches:
+      - abdu-exprimental
+  workflow_dispatch:
 
 jobs:
   install:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

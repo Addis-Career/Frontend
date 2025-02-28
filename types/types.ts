@@ -94,7 +94,7 @@ export interface UserProfile {
     position: string;
     startDate: string;
     endDate: string;
-    description: string;
+    description: string; 
   }[];
   education?: {
     school: string;

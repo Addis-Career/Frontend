@@ -2,32 +2,36 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import fetch from "../api/jobApi";
 import { ResponseJob, JobsState } from "../../types/types";
+import axios from "axios";
+import { ENDPOINTS } from "../config";
 
-export const fetchJobs = createAsyncThunk<
-  ResponseJob,
-  {
-    nextUrl: string | null;
-    job_title: string | null;
-    work_arrangement: string | null;
-    job_type: string | null;
-  },
-  { rejectValue: string }
->(
+export const fetchJobs = createAsyncThunk(
   "jobs/fetchJobs",
-  async (
-    { nextUrl, job_title, work_arrangement, job_type },
-    { rejectWithValue }
-  ) => {
+  async ({ nextUrl, job_title, work_arrangement, job_type, token }: { 
+    nextUrl: string; 
+    job_title: string; 
+    work_arrangement: string; 
+    job_type: string;
+    token?: string;
+  }, { rejectWithValue }) => {
     try {
-      const response = await fetch({
-        nextUrl,
-        job_title,
-        work_arrangement,
-        job_type,
-      });
-      return response;
+      const url = nextUrl || ENDPOINTS.JOBS;
+      const params = new URLSearchParams();
+      if (job_title) params.append('job_title', job_title);
+      if (work_arrangement) params.append('work_arrangement', work_arrangement);
+      if (job_type) params.append('job_type', job_type);
+
+      const config: any = {};
+      if (token) {
+        config.headers = {
+          'Authorization': `Bearer ${token}`
+        };
+      }
+
+      const response = await axios.get(`${url}${params.toString() ? '?' + params.toString() : ''}`, config);
+      return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || "Failed to fetch jobs");
+      return rejectWithValue(error.response?.data?.detail || "Failed to fetch jobs");
     }
   }
 );
@@ -67,7 +71,7 @@ const jobsSlice = createSlice({
       )
       .addCase(fetchJobs.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Something went wrong";
+        state.error = typeof action.payload === 'string' ? action.payload : "Something went wrong";
       });
   },
 });

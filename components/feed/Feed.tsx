@@ -5,14 +5,19 @@ import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { BiDislike } from "react-icons/bi";
+import { FaBookmark, FaRegBookmark, FaStackOverflow } from "react-icons/fa";
 import { RootState, AppDispatch } from "../../lib/store";
 import { fetchJobs } from "../../lib/features/jobSlice";
+import { addBookmark, removeBookmark, fetchBookmarks, BookmarkState } from "@/lib/features/bookmarkSlice";
 import Sidebar from "../layout/Sidebar";
 import { Card, CardBody, Chip, Button, Skeleton } from "@nextui-org/react";
-import { getProfileAsync } from "@/lib/features/createProfile";
+import { ENDPOINTS } from "@/lib/config";
+
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Feed = () => {
+  const router = useRouter();
   const [likedJobs, setLikedJobs] = useState(new Set<number>());
   const [dislikedJobs, setDislikedJobs] = useState(new Set<number>());
   const [selectedJob, setSelectedJob] = useState<any>(null);
@@ -24,20 +29,62 @@ const Feed = () => {
   const { jobs, loading, error } = useSelector(
     (state: RootState) => state.jobs
   );
-
-  const handleLike = (e: React.MouseEvent, id: number) => {
-    e.stopPropagation();
-    const updatedLikes = new Set(likedJobs);
-    if (updatedLikes.has(id)) {
-      updatedLikes.delete(id);
-    } else {
-      updatedLikes.add(id);
-      if (dislikedJobs.has(id)) {
-        dislikedJobs.delete(id);
-        setDislikedJobs(new Set(dislikedJobs));
-      }
+  const bookmarks = useSelector((state: RootState) => state?.bookmarks?.bookmarks ?? []);
+  
+  const [bookmarkingJobs, setBookmarkingJobs] = useState(new Set<number>());
+  
+  useEffect(() => {
+    if (session?.user?.accessToken) {
+      dispatch(fetchBookmarks(session.user.accessToken));
     }
-    setLikedJobs(updatedLikes);
+  }, [session?.user?.accessToken]); // Only depend on the token, not dispatch
+
+  // Add initial jobs fetch
+  useEffect(() => {
+    dispatch(fetchJobs({
+      nextUrl: "",
+      job_title: "",
+      work_arrangement: "",
+      job_type: "",
+    }));
+  }, []); // Empty dependency array for initial fetch only
+
+  const isBookmarked = (jobId: number) => {
+    return bookmarks.some(bookmark => bookmark.job_details.id === jobId);
+  };
+
+  const handleLike = async (id: number) => {
+    console.log('handleLike called with id:', id);
+    
+    if (!session?.user?.accessToken) {
+      console.log('No session or token found');
+      return;
+    }
+
+    setBookmarkingJobs(prev => new Set([...prev, id]));
+    try {
+      console.log('Attempting to bookmark job:', id);
+      if (isBookmarked(id)) {
+        console.log('Job is already bookmarked, removing...');
+        await dispatch(removeBookmark({ jobId: id, token: session.user.accessToken })).unwrap();
+      } else {
+        console.log('Adding new bookmark...');
+        await dispatch(addBookmark({ 
+          jobId: id, 
+          token: session.user.accessToken 
+        })).unwrap();
+      }
+      // Refresh bookmarks list
+      await dispatch(fetchBookmarks(session.user.accessToken));
+    } catch (error) {
+      console.error('Error handling bookmark:', error);
+    } finally {
+      setBookmarkingJobs(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
   };
 
   const handleDislike = (e: React.MouseEvent, id: number) => {
@@ -91,24 +138,67 @@ const Feed = () => {
 
   return (
     <div className="w-full p-5 pt-10 h-full flex flex-col gap-3">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Jobs Feed</h1>
+        <div className="flex gap-2">
+          <Button
+            color="secondary"
+            variant="flat"
+            onClick={() => {
+              if (session?.user?.accessToken) {
+                dispatch(fetchJobs({
+                  nextUrl: ENDPOINTS.BEST_MATCHES,
+                  job_title: "",
+                  work_arrangement: "",
+                  job_type: "",
+                  token: session.user.accessToken
+                }));
+              }
+            }}
+            startContent={<FaStackOverflow className="w-4 h-4" />}
+          >
+            Best Matches
+          </Button>
+          <Button
+            color="primary"
+            variant="flat"
+            onClick={() => router.push("/careers/bookmarks")}
+            startContent={<FaBookmark className="w-4 h-4" />}
+          >
+            My Bookmarks
+          </Button>
+        </div>
+      </div>
       <Sidebar isOpen={sidebarOpen} job={selectedJob} onClose={closeSidebar} />
       <div className="w-full h-full p-4 space-y-6 overflow-auto hide-scrollbar">
-        {isFetching || loading ? (
+        {isFetching || loading || !jobs?.results ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, index) => (
-              <Card key={index} className="w-full">
-                <CardBody className="space-y-3">
-                  <Skeleton className="rounded-lg">
-                    <div className="h-6 w-3/4 rounded-lg bg-default-200"></div>
-                  </Skeleton>
-                  <Skeleton className="rounded-lg">
-                    <div className="h-4 w-4/5 rounded-lg bg-default-200"></div>
-                  </Skeleton>
-                  <Skeleton className="rounded-lg">
-                    <div className="h-4 w-2/3 rounded-lg bg-default-300"></div>
-                  </Skeleton>
-                </CardBody>
-              </Card>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <Card className="w-full hover:shadow-lg transition-shadow duration-300 cursor-pointer bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+                  <CardBody className="p-5">
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="h-7 w-2/3 rounded-lg animate-shimmer"></div>
+                      <div className="flex space-x-3">
+                        <div className="w-6 h-6 rounded-full animate-shimmer"></div>
+                        <div className="w-6 h-6 rounded-full animate-shimmer"></div>
+                      </div>
+                    </div>
+                    <div className="h-4 w-1/3 mb-3 rounded-lg animate-shimmer"></div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className="h-5 w-16 rounded-full animate-shimmer"></div>
+                      ))}
+                    </div>
+                    <div className="h-[60px] w-full rounded-lg animate-shimmer"></div>
+                  </CardBody>
+                </Card>
+              </motion.div>
             ))}
           </div>
         ) : error ? (
@@ -162,14 +252,18 @@ const Feed = () => {
                         <Button
                           isIconOnly
                           variant="light"
-                          onClick={(e) => handleLike(e, job.id)}
+                          onPress={() => {
+                            console.log('Heart button clicked');
+                            handleLike(job.id);
+                          }}
+                          isLoading={bookmarkingJobs.has(job.id)}
                           className={
-                            likedJobs.has(job.id)
+                            isBookmarked(job.id)
                               ? "text-red-500"
                               : "text-gray-400 hover:text-red-500"
                           }
                         >
-                          {likedJobs.has(job.id) ? (
+                          {isBookmarked(job.id) ? (
                             <AiFillHeart className="w-6 h-6" />
                           ) : (
                             <AiOutlineHeart className="w-6 h-6" />

@@ -6,4 +6,7 @@ export const ENDPOINTS = {
   PROFILE: `${API_BASE_URL}/api/accounts/profile/`,
   JOBS: `${API_BASE_URL}/api/jobs`,
   LISTINGS: `${API_BASE_URL}/api/listings/`,
+  BOOKMARK: `${API_BASE_URL}/api/jobs/bookmark/`,
+  LIKE: `${API_BASE_URL}/api/jobs/like/`,
+  BEST_MATCHES: `${API_BASE_URL}/api/jobs/best-matches/`,
 }; 

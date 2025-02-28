@@ -28,13 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider>
-          <NextUIProvider>
-            <MantineProvider>
-              <Provider store={store}>{children}</Provider>
-            </MantineProvider>
-          </NextUIProvider>
-        </SessionProvider>
+        <Provider store={store}>
+          <SessionProvider>
+            <NextUIProvider>
+              <MantineProvider>
+                {children}
+              </MantineProvider>
+            </NextUIProvider>
+          </SessionProvider>
+        </Provider>
       </body>
     </html>
   );
